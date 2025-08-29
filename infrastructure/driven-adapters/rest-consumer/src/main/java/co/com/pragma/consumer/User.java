@@ -1,4 +1,5 @@
-package co.com.pragma.model.loan;
+package co.com.pragma.consumer;
+
 import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,11 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class Loan {
+public class User {
+
     private Long id;
-    private double amount;
-    private int term;
-    private String dniUser;
-    private Long idLoanType;
-    private Long idState;
+
 }
