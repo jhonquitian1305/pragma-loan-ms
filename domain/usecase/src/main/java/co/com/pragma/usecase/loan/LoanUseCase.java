@@ -11,18 +11,18 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
-public class LoanUseCase {
+public class LoanUseCase implements ILoanUseCase {
 
     private final LoanRepository loanRepository;
     private final LoanTypeRepository loanTypeRepository;
     private final StateRepository stateRepository;
     private final UserRepository userRepository;
 
-    Mono<Loan> createOne(Loan loan){
+    public Mono<Loan> createOne(Loan loan){
         Long idState = StateEnum.PENDIENTE_REVISION.getId();
 
         return this.userRepository.getByDni(loan.getDniUser())
-                .switchIfEmpty(Mono.error(new Throwable()))
+                .switchIfEmpty(Mono.error(new NotFoundException("User with dni %s not found".formatted(loan.getDniUser()))))
                 .flatMap(id ->
                     loanTypeRepository.existsById(loan.getIdLoanType())
                     .flatMap(foundLoanType -> {

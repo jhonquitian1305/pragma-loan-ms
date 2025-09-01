@@ -39,7 +39,7 @@ public class RestConsumer implements UserRepository {
                 .doOnError(e -> logger.error("Error calling external service user {}", dni, e));
     }
 
-    public Mono<Long> getUserByDniFallback(String dni, Exception exception) {
+    private Mono<Long> getUserByDniFallback(String dni, Exception exception) {
         logger.error("fallback error dni={}, error={}", dni, exception.getMessage());
         return Mono.empty();
     }
