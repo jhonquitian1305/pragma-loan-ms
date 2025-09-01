@@ -3,7 +3,7 @@ package co.com.pragma.r2dbc.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "adapters.r2dbc.pool")
+@ConfigurationProperties(prefix = "spring.r2dbc.pool")
 public record PostgresqlConnectionProperties(
         String host,
         Integer port,
