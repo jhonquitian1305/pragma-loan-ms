@@ -1,24 +1,45 @@
 server:
-  port: 8080
+  port: ${PORT_APP}
 spring:
   application:
     name: "request"
   devtools:
     add-properties: false
-  h2:
-    console:
-      enabled: true
-      path: "/h2"
   profiles:
     include: null
+
+  r2dbc:
+    pool:
+      host: ${HOST_DB}
+      port: ${PORT_DB}
+      database: ${NAME_DB}
+      username: ${USER_DB}
+      password: ${PASSWORD_DB}
+      initial-size: 5
+      max-size: 20
+      max-idle-time: 30m
+
+  sql:
+    init:
+      mode: ${MODE_SQL}
+
 adapter:
   restconsumer:
     timeout: 5000
-    url: "http://localhost:8080"
+    url: ${URL_REST_CONSUMER}
+
 management:
   health:
     circuitbreakers:
       enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
 resilience4j:
   circuitbreaker:
     instances:
@@ -31,3 +52,5 @@ resilience4j:
         slidingWindowSize: 10
         minimumNumberOfCalls: 10
         waitDurationInOpenState: "10s"
+cors:
+  allowed-origins: ${ALLOWED_CORS}
