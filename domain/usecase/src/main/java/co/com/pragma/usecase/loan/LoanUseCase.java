@@ -26,17 +26,18 @@ public class LoanUseCase implements ILoanUseCase {
                 .flatMap(id ->
                     loanTypeRepository.existsById(loan.getIdLoanType())
                     .flatMap(foundLoanType -> {
-                        if(Boolean.TRUE.equals(foundLoanType)){
+                        if(Boolean.FALSE.equals(foundLoanType)){
                             return Mono.error(new NotFoundException("Loan type with id %s doesn't exist".formatted(loan.getIdLoanType())));
                         }
 
                         return this.stateRepository.existsById(idState);
                     })
                     .flatMap(foundState -> {
-                        if(foundState){
+                        if(Boolean.FALSE.equals(foundState)){
                             return Mono.error(new NotFoundException("Loan type with id %s doesn't exist".formatted(idState)));
                         }
 
+                        loan.setIdState(idState);
                         return this.loanRepository.createOne(loan);
                     })
                 );

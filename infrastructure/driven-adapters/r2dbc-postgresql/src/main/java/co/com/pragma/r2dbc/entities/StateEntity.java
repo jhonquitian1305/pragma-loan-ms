@@ -1,7 +1,7 @@
 package co.com.pragma.r2dbc.entities;
 
-import jakarta.persistence.Id;
 import lombok.*;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Getter
@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table("states")
 public class StateEntity {
     @Id
-    private Integer id;
+    private Long id;
     private String name;
     private String description;
 }

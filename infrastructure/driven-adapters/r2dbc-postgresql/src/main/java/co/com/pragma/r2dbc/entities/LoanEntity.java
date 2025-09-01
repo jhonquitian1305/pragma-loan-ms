@@ -1,7 +1,7 @@
 package co.com.pragma.r2dbc.entities;
 
-import jakarta.persistence.Id;
 import lombok.*;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Getter
@@ -17,6 +17,6 @@ public class LoanEntity {
     private double amount;
     private int term;
     private String dniUser;
-    private Integer idLoanType;
-    private Integer idState;
+    private Long idLoanType;
+    private Long idState;
 }

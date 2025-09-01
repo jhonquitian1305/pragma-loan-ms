@@ -35,7 +35,8 @@ public class RestConsumer implements UserRepository {
                             logger.error("External service failed user {}", dni);
                             return Mono.error(new RuntimeException("Contact to admin"));
                         })
-                .bodyToMono(Long.class)
+                .bodyToMono(User.class)
+                .map(User::getId)
                 .doOnError(e -> logger.error("Error calling external service user {}", dni, e));
     }
 
