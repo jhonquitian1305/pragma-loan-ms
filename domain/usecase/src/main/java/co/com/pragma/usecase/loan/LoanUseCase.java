@@ -18,10 +18,10 @@ public class LoanUseCase implements ILoanUseCase {
     private final StateRepository stateRepository;
     private final UserRepository userRepository;
 
-    public Mono<Loan> createOne(Loan loan){
+    public Mono<Loan> createOne(Loan loan, String token){
         Long idState = StateEnum.PENDIENTE_REVISION.getId();
 
-        return this.userRepository.getByDni(loan.getDniUser())
+        return this.userRepository.getByDni(loan.getDniUser(), token)
                 .switchIfEmpty(Mono.error(new NotFoundException("User with dni %s not found".formatted(loan.getDniUser()))))
                 .flatMap(id ->
                     loanTypeRepository.existsById(loan.getIdLoanType())

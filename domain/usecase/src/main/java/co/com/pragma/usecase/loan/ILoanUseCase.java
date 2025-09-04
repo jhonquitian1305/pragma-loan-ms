@@ -4,5 +4,5 @@ import co.com.pragma.model.loan.Loan;
 import reactor.core.publisher.Mono;
 
 public interface ILoanUseCase {
-    Mono<Loan> createOne(Loan loan);
+    Mono<Loan> createOne(Loan loan, String token);
 }

@@ -5,6 +5,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -19,11 +20,12 @@ public class RestConsumer implements UserRepository {
 
     @Override
     @CircuitBreaker(name = "getUser" , fallbackMethod = "getUserByDniFallback")
-    public Mono<Long> getByDni(String dni) {
+    public Mono<Long> getByDni(String dni, String token) {
         logger.info("get user with dni {}", dni);
         return client
                 .get()
                 .uri("/users/{dni}", dni)
+                .header(HttpHeaders.AUTHORIZATION, token)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError,
                         clientResponse -> {
@@ -40,7 +42,7 @@ public class RestConsumer implements UserRepository {
                 .doOnError(e -> logger.error("Error calling external service user {}", dni, e));
     }
 
-    private Mono<Long> getUserByDniFallback(String dni, Exception exception) {
+    private Mono<Long> getUserByDniFallback(String dni, String token, Exception exception) {
         logger.error("fallback error dni={}, error={}", dni, exception.getMessage());
         return Mono.empty();
     }
