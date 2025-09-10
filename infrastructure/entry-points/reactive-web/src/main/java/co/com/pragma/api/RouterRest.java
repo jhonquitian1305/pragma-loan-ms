@@ -9,9 +9,11 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springdoc.core.annotations.RouterOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
@@ -25,7 +27,7 @@ public class RouterRest {
 
     @RouterOperation(
             operation = @Operation(
-                    operationId = "loans", summary = "Save a user", tags = { "Loans" },
+                    operationId = "loans", summary = "Save a loan", tags = { "Loans" },
                     requestBody = @RequestBody(
                             required = true,
                             description = "Create a Loan",
@@ -47,9 +49,10 @@ public class RouterRest {
                             )
                     ),
                     responses = {
-                            @ApiResponse(responseCode = "201", description = "User created", content = @Content(schema = @Schema(implementation = Loan.class))),
+                            @ApiResponse(responseCode = "201", description = "Loan created", content = @Content(schema = @Schema(implementation = Loan.class))),
                             @ApiResponse(responseCode = "400", description = "Invalid data"),
-                    }
+                    },
+                    security = { @SecurityRequirement(name = "bearerAuth")}
             )
     )
     @Bean
@@ -58,6 +61,13 @@ public class RouterRest {
                 .filter(filter);
     }
 
+    @RouterOperation(
+            method = RequestMethod.GET,
+            operation = @Operation(
+                    summary = "Get info loans", operationId = "loans", tags = { "Loans" },
+                    security = { @SecurityRequirement(name = "bearerAuth")}
+            )
+    )
     @Bean
     public RouterFunction<ServerResponse> getLoanFunction(Handler handler, GlobalExceptionFilter filter){
         return route(GET("/api/v1/requests"), handler::findAll)
