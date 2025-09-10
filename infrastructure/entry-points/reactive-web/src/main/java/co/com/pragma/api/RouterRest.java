@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -54,6 +55,12 @@ public class RouterRest {
     @Bean
     public RouterFunction<ServerResponse> routerFunction(Handler handler, GlobalExceptionFilter filter) {
         return route(POST("/api/v1/requests"), handler::createOne)
+                .filter(filter);
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> getLoanFunction(Handler handler, GlobalExceptionFilter filter){
+        return route(GET("/api/v1/requests"), handler::findAll)
                 .filter(filter);
     }
 }

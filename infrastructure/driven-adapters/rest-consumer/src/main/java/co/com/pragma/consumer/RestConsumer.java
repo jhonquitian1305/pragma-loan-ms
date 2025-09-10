@@ -1,5 +1,6 @@
 package co.com.pragma.consumer;
 
+import co.com.pragma.model.dto.UserDTO;
 import co.com.pragma.model.loan.gateways.UserRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,28 @@ public class RestConsumer implements UserRepository {
                         })
                 .bodyToMono(User.class)
                 .map(User::getId)
+                .doOnError(e -> logger.error("Error calling external service user {}", dni, e));
+    }
+
+    @Override
+    @CircuitBreaker(name = "getUser" , fallbackMethod = "getUserByDniFallback")
+    public Mono<UserDTO> getDataByDni(String dni, String token) {
+        return client
+                .get()
+                .uri("/users/info/{dni}", dni)
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError,
+                        clientResponse -> {
+                            logger.warn("user dni {} not found", dni);
+                            return Mono.empty();
+                        })
+                .onStatus(HttpStatusCode::is5xxServerError,
+                        clientResponse -> {
+                            logger.error("External service failed user {} not found", dni);
+                            return Mono.error(new RuntimeException("Contact to admin"));
+                        })
+                .bodyToMono(UserDTO.class)
                 .doOnError(e -> logger.error("Error calling external service user {}", dni, e));
     }
 
